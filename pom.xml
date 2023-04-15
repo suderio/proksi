@@ -117,11 +117,9 @@
         <configuration>
           <compilerArgs>
             <arg>-parameters</arg>
-<!--            <source>${maven.compiler.release}</source>
-            <target>${maven.compiler.release}</target>-->
           </compilerArgs>
         </configuration>
-        <executions>
+<!--        <executions>
           <execution>
             <id>default-compile</id>
             <phase>none</phase>
@@ -144,7 +142,7 @@
               <goal>testCompile</goal>
             </goals>
           </execution>
-        </executions>
+        </executions>-->
       </plugin>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -189,7 +187,7 @@
             <configuration>
               <sourceDirs>
                 <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
-                <sourceDir>${project.basedir}/src/main/java</sourceDir>
+                <!--<sourceDir>${project.basedir}/src/main/java</sourceDir>-->
               </sourceDirs>
             </configuration>
           </execution>
@@ -201,7 +199,7 @@
             <configuration>
               <sourceDirs>
                 <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
-                <sourceDir>${project.basedir}/src/test/java</sourceDir>
+                <!--<sourceDir>${project.basedir}/src/test/java</sourceDir>-->
               </sourceDirs>
             </configuration>
           </execution>

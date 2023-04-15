@@ -11,9 +11,7 @@ import net.technearts.proksi.server.HttpProxyServerConfig
 import net.technearts.proksi.util.HttpUtil.checkUrl
 
 /**
- * @Author: LiWei
- * @Description 请求转发功能实现
- * @Date: 2019/3/4 16:23
+ * @Description Implementation of request forwarding function
  */
 object InterceptForwardHttpProxyServer {
     // curl -k -x 127.0.0.1:9999 https://www.baidu.com
@@ -32,8 +30,8 @@ object InterceptForwardHttpProxyServer {
                             clientChannel: Channel, httpRequest: HttpRequest,
                             pipeline: HttpProxyInterceptPipeline
                         ) {
-                            //匹配到百度的请求转发到淘宝
-                            if (checkUrl(httpRequest!!, "^www.baidu.com$")) {
+                            //Requests matched to Baidu are forwarded to Taobao
+                            if (checkUrl(httpRequest, "^www.baidu.com$")) {
                                 pipeline.requestProto!!.host = "www.taobao.com"
                                 pipeline.requestProto!!.port = 443
                                 pipeline.requestProto!!.ssl = true

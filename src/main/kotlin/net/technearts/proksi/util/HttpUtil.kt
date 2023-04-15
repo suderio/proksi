@@ -8,7 +8,7 @@ import io.netty.util.AsciiString
 
 object HttpUtil {
     /**
-     * 检测url是否匹配
+     * Check if the url matches
      */
     fun checkUrl(httpRequest: HttpRequest, regex: String?): Boolean {
         val host = httpRequest.headers()[HttpHeaderNames.HOST]
@@ -28,7 +28,7 @@ object HttpUtil {
     }
 
     /**
-     * 检测头中的值是否为预期
+     * Check if the value in the header is expected
      *
      * @param httpHeaders
      * @param name
@@ -41,7 +41,7 @@ object HttpUtil {
     }
 
     /**
-     * 检测是否为请求网页资源
+     * Detect whether a web resource is requested
      */
     fun isHtml(httpRequest: HttpRequest, httpResponse: HttpResponse): Boolean {
         val accept = httpRequest.headers()[HttpHeaderNames.ACCEPT]

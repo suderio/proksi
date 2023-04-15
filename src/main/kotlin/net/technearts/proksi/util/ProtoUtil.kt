@@ -9,23 +9,22 @@ import java.util.*
 
 object ProtoUtil {
     /*
-    代理服务器需要处理两种握手类型，一种是非CONNECT的http报文代理，另外一种是CONNECT的TCP报文原始转发
-    示例：
-        GET http://www.google.com/ HTTP/1.1
-        CONNECT www.google.com:443 HTTP/1.1
-        CONNECT echo.websocket.org:443 HTTP/1.1
-        CONNECT echo.websocket.org:80 HTTP/1.1
-    当客户端请求协议为TLS(https、wss)、WebSocket(ws)的时候，都会发起CONNECT请求进行原始转发，
-    所以在握手的时候是无法区分客户端原始请求是否为TLS。
-     */
+     The proxy server needs to handle two types of handshakes, one is non-CONNECT http packet proxy, and the other is the original forwarding of CONNECT TCP packets
+     Example:
+         GET http://www.google.com/ HTTP/1.1
+         CONNECT www.google.com:443 HTTP/1.1
+         CONNECT echo.websocket.org:443 HTTP/1.1
+         CONNECT echo.websocket.org:80 HTTP/1.1
+     When the client request protocol is TLS (https, wss) or WebSocket (ws), it will initiate a CONNECT request for original forwarding.
+     Therefore, it is impossible to distinguish whether the original request of the client is TLS during the handshake.
+      */
     fun getRequestProto(httpRequest: HttpRequest): RequestProto? {
         val requestProto = RequestProto()
         var uri = httpRequest.uri().lowercase(Locale.getDefault())
         if (!uri.startsWith("http://")) {
             uri = "http://$uri"
         }
-        val url: URL
-        url = try {
+        val url: URL = try {
             URL(uri)
         } catch (e: MalformedURLException) {
             return null
@@ -38,7 +37,8 @@ object ProtoUtil {
 
     class RequestProto : Serializable {
         /**
-         * 请求是否来源于http代理，用于区分是通过代理服务访问的还是直接通过http访问的代理服务器
+         * Whether the request comes from an http proxy, used to distinguish whether it is accessed through a proxy
+         * service or a proxy server accessed directly through http
          */
         var proxy = false
         var host: String? = null

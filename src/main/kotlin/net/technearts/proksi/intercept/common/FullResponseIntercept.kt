@@ -17,9 +17,9 @@ abstract class FullResponseIntercept @JvmOverloads constructor(private val maxCo
     ) {
         if (httpResponse is FullHttpResponse) {
             val fullHttpResponse = httpResponse
-            // 判断是第一个处理FullResponse的拦截器是否匹配
+            // Determine se o primeiro interceptor que lida com FullResponse corresponde
             val isFirstMatch = isMatch != null && isMatch == true
-            // 判断后续的拦截器是否匹配
+            // Determine se os interceptadores subsequentes correspondem
             val isAfterMatch = if (isFirstMatch) false else match(pipeline.httpRequest, pipeline.httpResponse, pipeline)
             if (isFirstMatch || isAfterMatch) {
                 handleResponse(pipeline.httpRequest, fullHttpResponse, pipeline)
@@ -52,7 +52,7 @@ abstract class FullResponseIntercept @JvmOverloads constructor(private val maxCo
 
     @Deprecated("")
     /**
-     * 剥离到工具类中了：[net.technearts.proksi.util.HttpUtil.isHtml]
+     * Stripped into the tool class：[net.technearts.proksi.util.HttpUtil.isHtml]
      */
     protected fun isHtml(httpRequest: HttpRequest, httpResponse: HttpResponse): Boolean {
         val accept = httpRequest.headers()[HttpHeaderNames.ACCEPT]
@@ -63,7 +63,7 @@ abstract class FullResponseIntercept @JvmOverloads constructor(private val maxCo
     }
 
     /**
-     * 匹配到的响应会解码成FullResponse
+     * Matched responses will be decoded into FullResponse
      */
     abstract fun match(
         httpRequest: HttpRequest?, httpResponse: HttpResponse?,
@@ -71,7 +71,7 @@ abstract class FullResponseIntercept @JvmOverloads constructor(private val maxCo
     ): Boolean
 
     /**
-     * 拦截并处理响应
+     * Intercept and process the response
      */
     open fun handleResponse(
         httpRequest: HttpRequest?, httpResponse: FullHttpResponse?,

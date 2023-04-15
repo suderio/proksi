@@ -22,9 +22,8 @@ import java.util.stream.Collectors
 import java.util.stream.Stream
 
 /**
- * 使用了 BC 套件的证书生成器.
+ * Usa o gerador de certificados do BC Suite.
  *
- * @author LamGC
  */
 @CertGeneratorInfo(name = "BouncyCastle")
 class BouncyCastleCertGenerator : CertGenerator {
@@ -36,7 +35,7 @@ class BouncyCastleCertGenerator : CertGenerator {
     ): X509Certificate {
         /* String issuer = "C=CN, ST=GD, L=SZ, O=lee, OU=study, CN=ProxyeeRoot";
         String subject = "C=CN, ST=GD, L=SZ, O=lee, OU=study, CN=" + host;*/
-        //根据CA证书subject来动态生成目标服务器证书的issuer和subject
+        // Gere dinamicamente o certificado do servidor de destino de acordo com o assunto do certificado CA issuer和subject
         val subject = Stream.of(*issuer!!.split(", ".toRegex()).dropLastWhile { it.isEmpty() }
             .toTypedArray()).map { item: String ->
             val arr = item.split("=".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
@@ -49,21 +48,21 @@ class BouncyCastleCertGenerator : CertGenerator {
 
         //doc from https://www.cryptoworkshop.com/guide/
         val jv3Builder = JcaX509v3CertificateBuilder(
-            X500Name(issuer),  //issue#3 修复ElementaryOS上证书不安全问题(serialNumber为1时证书会提示不安全)，避免serialNumber冲突，采用时间戳+4位随机数生成
+            X500Name(issuer),  // problema # 3 Corrija o problema de certificado inseguro no ElementaryOS (o certificado solicitará inseguro quando o serialNumber for 1), evite conflitos de serialNumber e use timestamp + geração de número aleatório de 4 dígitos
             BigInteger.valueOf(System.currentTimeMillis() + (Math.random() * 10000).toLong() + 1000),
             caNotBefore,
             caNotAfter,
             X500Name(subject),
             serverPubKey
         )
-        //SAN扩展证书支持的域名，否则浏览器提示证书不安全
+        // O nome de domínio suportado pelo certificado de extensão SAN, caso contrário, o navegador avisa que o certificado não é seguro
         val generalNames = arrayOfNulls<GeneralName>(hosts.size)
         for (i in hosts.indices) {
             generalNames[i] = GeneralName(GeneralName.dNSName, hosts[i])
         }
         val subjectAltName = GeneralNames(generalNames)
         jv3Builder.addExtension(Extension.subjectAlternativeName, false, subjectAltName)
-        //SHA256 用SHA1浏览器可能会提示证书不安全
+        //SHA256 usando o navegador SHA1 pode solicitar que o certificado não seja seguro
         val signer = JcaContentSignerBuilder("SHA256WithRSAEncryption").build(caPriKey)
         return JcaX509CertificateConverter().getCertificate(jv3Builder.build(signer))
     }
@@ -91,7 +90,7 @@ class BouncyCastleCertGenerator : CertGenerator {
 
     companion object {
         init {
-            //注册BouncyCastleProvider加密库
+            // Registrar a biblioteca de criptografia BouncyCastleProvider
             Security.addProvider(BouncyCastleProvider())
         }
 

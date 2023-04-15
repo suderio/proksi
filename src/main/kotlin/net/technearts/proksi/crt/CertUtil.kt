@@ -36,7 +36,7 @@ object CertUtil {
         }
 
     /**
-     * 生成RSA公私密钥对,长度为2048
+     * Gere um par de chaves públicas-privadas RSA com um comprimento de 2048
      */
     @Throws(Exception::class)
     fun genKeyPair(): KeyPair {
@@ -46,7 +46,7 @@ object CertUtil {
     }
 
     /**
-     * 从文件加载RSA私钥
+     * Carregar chave privada RSA do arquivo
      * openssl pkcs8 -topk8 -nocrypt -inform PEM -outform DER -in ca.key -out ca_private.der
      */
     @Throws(NoSuchAlgorithmException::class, InvalidKeySpecException::class)
@@ -56,7 +56,7 @@ object CertUtil {
     }
 
     /**
-     * 从文件加载RSA私钥
+     * Carregar chave privada RSA do arquivo
      * openssl pkcs8 -topk8 -nocrypt -inform PEM -outform DER -in ca.key -out ca_private.der
      */
     @Throws(Exception::class)
@@ -65,8 +65,8 @@ object CertUtil {
     }
 
     /**
-     * 从文件加载RSA私钥 openssl pkcs8 -topk8 -nocrypt -inform PEM -outform DER -in ca.key -out
-     * ca_private.der
+     * Carregar chave privada RSA do arquivo
+     * openssl pkcs8 -topk8 -nocrypt -inform PEM -outform DER -in ca.key -out ca_private.der
      */
     @Throws(Exception::class)
     fun loadPriKey(uri: URI): PrivateKey {
@@ -74,7 +74,7 @@ object CertUtil {
     }
 
     /**
-     * 从文件加载RSA私钥
+     * Carregar chave privada RSA do arquivo
      * openssl pkcs8 -topk8 -nocrypt -inform PEM -outform DER -in ca.key -out ca_private.der
      */
     @Throws(IOException::class, InvalidKeySpecException::class, NoSuchAlgorithmException::class)
@@ -91,7 +91,7 @@ object CertUtil {
     }
 
     /**
-     * 从文件加载RSA公钥
+     * Carregar chave pública RSA do arquivo
      * openssl rsa -in ca.key -pubout -outform DER -out ca_pub.der
      */
     @Throws(Exception::class)
@@ -101,7 +101,7 @@ object CertUtil {
     }
 
     /**
-     * 从文件加载RSA公钥
+     * Carregar chave pública RSA do arquivo
      * openssl rsa -in ca.key -pubout -outform DER -out ca_pub.der
      */
     @Throws(Exception::class)
@@ -111,7 +111,7 @@ object CertUtil {
     }
 
     /**
-     * 从文件加载RSA公钥
+     * Carregar chave pública RSA do arquivo
      * openssl rsa -in ca.key -pubout -outform DER -out ca_pub.der
      */
     @Throws(Exception::class)
@@ -120,7 +120,7 @@ object CertUtil {
     }
 
     /**
-     * 从文件加载RSA公钥
+     * Carregar chave pública RSA do arquivo
      * openssl rsa -in ca.key -pubout -outform DER -out ca_pub.der
      */
     @Throws(Exception::class)
@@ -137,7 +137,7 @@ object CertUtil {
     }
 
     /**
-     * 从文件加载证书
+     * Carregar certificado do arquivo
      */
     @Throws(CertificateException::class, IOException::class)
     fun loadCert(inputStream: InputStream): X509Certificate {
@@ -150,7 +150,7 @@ object CertUtil {
     }
 
     /**
-     * 从文件加载证书
+     * Carregar certificado do arquivo
      */
     @Throws(Exception::class)
     fun loadCert(path: String): X509Certificate {
@@ -158,7 +158,7 @@ object CertUtil {
     }
 
     /**
-     * 从文件加载证书
+     * Carregar certificado do arquivo
      */
     @Throws(Exception::class)
     fun loadCert(uri: URI): X509Certificate {
@@ -166,12 +166,12 @@ object CertUtil {
     }
 
     /**
-     * 读取ssl证书使用者信息
+     * Leia as informações do usuário do certificado SSL
      */
     @Throws(Exception::class)
     fun getSubject(inputStream: InputStream): String {
         val certificate = loadCert(inputStream)
-        //读出来顺序是反的需要反转下
+        //A ordem de leitura é invertida e precisa ser invertida
         val tempList =
             listOf(*certificate.issuerX500Principal.toString().split(", ".toRegex()).dropLastWhile { it.isEmpty() }
                 .toTypedArray())
@@ -180,11 +180,11 @@ object CertUtil {
     }
 
     /**
-     * 读取ssl证书使用者信息
+     * Leia as informações do usuário do certificado SSL
      */
     @Throws(Exception::class)
     fun getSubject(certificate: X509Certificate): String {
-        //读出来顺序是反的需要反转下
+        //A ordem de leitura é invertida e precisa ser invertida
         val tempList =
             Arrays.asList(*certificate.issuerX500Principal.toString().split(", ".toRegex()).dropLastWhile { it.isEmpty() }
                 .toTypedArray())
@@ -193,9 +193,9 @@ object CertUtil {
     }
 
     /**
-     * 动态生成服务器证书,并进行CA签授
+     * Gere certificados de servidor dinamicamente e execute a assinatura de CA
      *
-     * @param issuer 颁发机构
+     * @param issuer Autoridade
      */
     @JvmStatic
     @Throws(Exception::class)
@@ -208,7 +208,7 @@ object CertUtil {
     }
 
     /**
-     * 生成CA服务器证书
+     * Gerar certificado de servidor CA
      */
     @Throws(Exception::class)
     fun genCACert(
@@ -220,14 +220,14 @@ object CertUtil {
 
     var certGenerator: String?
         /**
-         * 获取当前所选择的生成器名称.
-         * @return 返回指定要使用的生成器名称.
+         * Obtenha o nome do gerador atualmente selecionado.
+         * @return Retorna o nome do gerador especificado a ser usado.
          */
         get() = currentSelectionGenerator
         /**
-         * 设置所使用的生成器名称.
-         * @param generatorName 欲使用的生成器所属名称, 如果为 null 则恢复默认生成器.
-         * @throws NoSuchElementException 如果指定名称不存在所属生成器则抛出该异常.
+         * Defina o nome do gerador a ser usado.
+         * @param generatorName O nome do gerador a ser usado, se for nulo, restaura o gerador padrão.
+         * @throws NoSuchElementException Lançado se o gerador com o nome especificado não existir.
          */
         set(generatorName) {
             setSelectionGenerator(
@@ -238,7 +238,7 @@ object CertUtil {
     @Throws(Exception::class)
     @JvmStatic
     fun main(args: Array<String>) {
-        //生成ca证书和私钥
+        //Gerar certificado ca e chave privada
         val keyPair = genKeyPair()
         val caCertFile = File("./ca.crt")
         if (caCertFile.exists()) {

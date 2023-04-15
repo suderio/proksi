@@ -14,6 +14,6 @@ object AsyncStartHttpProxyServer {
         config.bossGroupThreads = 1
         HttpProxyServer()
             .serverConfig(config)
-            .startAsync(9999).whenComplete(BiConsumer { result: Void?, cause: Throwable? -> cause?.printStackTrace() })
+            .startAsync(9999).whenComplete(BiConsumer { _: Void?, cause: Throwable? -> cause?.printStackTrace() })
     }
 }

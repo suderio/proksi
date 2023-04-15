@@ -4,11 +4,6 @@ import io.netty.handler.codec.http.HttpHeaderNames
 import io.netty.handler.codec.http.HttpRequest
 import net.technearts.proksi.server.auth.model.HttpToken
 
-/**
- * @Author LiWei
- * @Description
- * @Date 2021/1/15 14:12
- */
 interface HttpProxyAuthenticationProvider<R : HttpToken?> {
     fun authType(): String?
     fun authRealm(): String?

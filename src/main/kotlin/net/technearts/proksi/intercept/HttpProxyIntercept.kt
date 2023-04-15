@@ -6,12 +6,12 @@ import io.netty.handler.codec.http.HttpRequest
 import io.netty.handler.codec.http.HttpResponse
 
 /**
- * http拦截器
+ * http interceptor
  * beforeConnect -> beforeRequest -> afterResponse
  */
 open class HttpProxyIntercept {
     /**
-     * 在与目标服务器建立连接之前拦截
+     * Intercept before establishing a connection with the target server
      */
     @Throws(Exception::class)
     open fun beforeConnect(clientChannel: Channel?, pipeline: HttpProxyInterceptPipeline) {
@@ -19,7 +19,7 @@ open class HttpProxyIntercept {
     }
 
     /**
-     * 拦截代理服务器到目标服务器的请求头
+     * Intercept the request header from the proxy server to the target server
      */
     @Throws(Exception::class)
     open fun beforeRequest(
@@ -30,7 +30,7 @@ open class HttpProxyIntercept {
     }
 
     /**
-     * 拦截代理服务器到目标服务器的请求体
+     * Intercept the request body from the proxy server to the target server
      */
     @Throws(Exception::class)
     open fun beforeRequest(
@@ -41,7 +41,7 @@ open class HttpProxyIntercept {
     }
 
     /**
-     * 拦截代理服务器到客户端的响应头
+     * Intercept the response header from the proxy server to the client
      */
     @Throws(Exception::class)
     open fun afterResponse(
@@ -52,7 +52,7 @@ open class HttpProxyIntercept {
     }
 
     /**
-     * 拦截代理服务器到客户端的响应体
+     * Intercept the response body from the proxy server to the client
      */
     @Throws(Exception::class)
     open fun afterResponse(

@@ -79,8 +79,10 @@ class HttpProxyServerHandler(
                     return
                 }
                 // 首次连接处理
-                if (serverConfig.httpProxyAcceptHandler != null
-                    && !serverConfig.httpProxyAcceptHandler!!.onAccept(msg, ctx.channel())
+                if (serverConfig.httpProxyAcceptHandler != null && !serverConfig.httpProxyAcceptHandler!!.onAccept(
+                        msg,
+                        ctx.channel()
+                    )
                 ) {
                     status = 2
                     ctx.channel().close()
@@ -119,22 +121,22 @@ class HttpProxyServerHandler(
                 ReferenceCountUtil.release(msg)
                 status = 1
             }
-        } else { // ssl和websocket的握手处理
+        } else { // Processamento de handshake de ssl e websocket
             val byteBuf = msg as ByteBuf
             if (serverConfig.isHandleSsl && byteBuf.getByte(0).toInt() == 22) { // ssl握手
                 requestProto!!.ssl = true
                 val port = (ctx.channel().localAddress() as InetSocketAddress).port
-                val sslCtx = SslContextBuilder
-                    .forServer(serverConfig.serverPriKey, getCert(port, requestProto!!.host, serverConfig)).build()
+                val sslCtx = SslContextBuilder.forServer(
+                    serverConfig.serverPriKey,
+                    getCert(port, requestProto!!.host, serverConfig)
+                ).build()
                 ctx.pipeline().addFirst(
                     "httpCodec", HttpServerCodec(
-                        serverConfig.maxInitialLineLength,
-                        serverConfig.maxHeaderSize,
-                        serverConfig.maxChunkSize
+                        serverConfig.maxInitialLineLength, serverConfig.maxHeaderSize, serverConfig.maxChunkSize
                     )
                 )
                 ctx.pipeline().addFirst("sslHandle", sslCtx.newHandler(ctx.alloc()))
-                // 重新过一遍pipeline，拿到解密后的的http报文
+                // Percorra o pipeline novamente e obtenha a mensagem http descriptografada
                 ctx.pipeline().fireChannelRead(msg)
                 return
             }
@@ -152,13 +154,11 @@ class HttpProxyServerHandler(
                 httpTagBuf = null
             }
 
-            // 如果connect后面跑的是HTTP报文，也可以抓包处理
+            // Se a mensagem HTTP estiver sendo executada atrás da conexão, ela também poderá capturar o pacote.
             if (isHttp(byteBuf)) {
                 ctx.pipeline().addFirst(
                     "httpCodec", HttpServerCodec(
-                        serverConfig.maxInitialLineLength,
-                        serverConfig.maxHeaderSize,
-                        serverConfig.maxChunkSize
+                        serverConfig.maxInitialLineLength, serverConfig.maxHeaderSize, serverConfig.maxChunkSize
                     )
                 )
                 ctx.pipeline().fireChannelRead(msg)
@@ -172,9 +172,11 @@ class HttpProxyServerHandler(
         val bytes = ByteArray(8)
         byteBuf.getBytes(0, bytes)
         val methodToken = String(bytes)
-        return (methodToken.startsWith("GET ") || methodToken.startsWith("POST ") || methodToken.startsWith("HEAD ")
-                || methodToken.startsWith("PUT ") || methodToken.startsWith("DELETE ") || methodToken.startsWith("OPTIONS ")
-                || methodToken.startsWith("CONNECT ") || methodToken.startsWith("TRACE "))
+        return (methodToken.startsWith("GET ") || methodToken.startsWith("POST ") || methodToken.startsWith("HEAD ") || methodToken.startsWith(
+            "PUT "
+        ) || methodToken.startsWith("DELETE ") || methodToken.startsWith("OPTIONS ") || methodToken.startsWith("CONNECT ") || methodToken.startsWith(
+            "TRACE "
+        ))
     }
 
     @Throws(Exception::class)
@@ -233,7 +235,7 @@ class HttpProxyServerHandler(
             }
         }
         if (isChangeRp || channelFuture == null) {
-            // connection异常 还有HttpContent进来，不转发
+            // A conexão é anormal e o HttpContent entra, não é encaminhado
             if (isHttp && msg !is HttpRequest) {
                 return
             }
@@ -242,23 +244,20 @@ class HttpProxyServerHandler(
             // by default, we use the proxy config set in the pipeline
             val proxyHandler =
                 build(if (interceptPipeline!!.proxyConfig == null) proxyConfig else interceptPipeline!!.proxyConfig)
-
-            /*
-             * 添加SSL client hello的Server Name Indication extension(SNI扩展) 有些服务器对于client
-             * hello不带SNI扩展时会直接返回Received fatal alert: handshake_failure(握手错误)
-             * 例如：https://cdn.mdn.mozilla.net/static/img/favicon32.7f3da72dcea1.png
-             */
+         /*
+          * Adicione a extensão Server Name Indication (extensão SNI) do cliente SSL Hello. Alguns servidores são para clientes
+          * Quando hello não tem a extensão SNI, ele retornará diretamente Alerta fatal recebido: handshake_failure (erro de aperto de mão)
+          * Exemplo: https://cdn.mdn.mozilla.net/static/img/favicon32.7f3da72dcea1.png
+          */
             val channelInitializer: ChannelInitializer<Channel?> = if (isHttp) HttpProxyInitializer(
-                channel,
-                pipeRp!!,
-                proxyHandler
+                channel, pipeRp!!, proxyHandler
             ) else TunnelProxyInitializer(channel, proxyHandler)
             val bootstrap = Bootstrap()
-            bootstrap.group(serverConfig.proxyLoopGroup) // 注册线程池
-                .channel(NioSocketChannel::class.java) // 使用NioSocketChannel来作为连接用的channel类
+            bootstrap.group(serverConfig.proxyLoopGroup) // Registrar pool de threads
+                .channel(NioSocketChannel::class.java) // Use NioSocketChannel como a classe de canal para conexão
                 .handler(channelInitializer)
             if (proxyHandler != null) {
-                // 代理服务器解析DNS和连接
+                // O servidor proxy resolve o DNS e se conecta
                 bootstrap.resolver(NoopAddressResolverGroup.INSTANCE)
             } else {
                 bootstrap.resolver(serverConfig.resolver())
@@ -269,7 +268,9 @@ class HttpProxyServerHandler(
                 if (future.isSuccess) {
                     future.channel().writeAndFlush(msg)
                     synchronized(requestList as LinkedList<Any>) {
-                        (requestList as LinkedList<Any>).forEach(Consumer { obj: Any? -> future.channel().writeAndFlush(obj) })
+                        (requestList as LinkedList<Any>).forEach(Consumer { obj: Any? ->
+                            future.channel().writeAndFlush(obj)
+                        })
                         (requestList as LinkedList<Any>).clear()
                         isConnect = true
                     }
@@ -299,25 +300,23 @@ class HttpProxyServerHandler(
         val interceptPipeline = HttpProxyInterceptPipeline(object : HttpProxyIntercept() {
             @Throws(Exception::class)
             override fun beforeRequest(
-                clientChannel: Channel,
-                httpRequest: HttpRequest,
-                pipeline: HttpProxyInterceptPipeline
+                clientChannel: Channel, httpRequest: HttpRequest, pipeline: HttpProxyInterceptPipeline
             ) {
                 handleProxyData(clientChannel, httpRequest, true)
             }
 
             @Throws(Exception::class)
             override fun beforeRequest(
-                clientChannel: Channel,
-                httpContent: HttpContent,
-                pipeline: HttpProxyInterceptPipeline
+                clientChannel: Channel, httpContent: HttpContent, pipeline: HttpProxyInterceptPipeline
             ) {
                 handleProxyData(clientChannel, httpContent, true)
             }
 
             @Throws(Exception::class)
             override fun afterResponse(
-                clientChannel: Channel?, proxyChannel: Channel?, httpResponse: HttpResponse?,
+                clientChannel: Channel?,
+                proxyChannel: Channel?,
+                httpResponse: HttpResponse?,
                 pipeline: HttpProxyInterceptPipeline
             ) {
                 clientChannel!!.writeAndFlush(httpResponse)
@@ -330,7 +329,9 @@ class HttpProxyServerHandler(
 
             @Throws(Exception::class)
             override fun afterResponse(
-                clientChannel: Channel?, proxyChannel: Channel?, httpContent: HttpContent?,
+                clientChannel: Channel?,
+                proxyChannel: Channel?,
+                httpContent: HttpContent?,
                 pipeline: HttpProxyInterceptPipeline
             ) {
                 clientChannel!!.writeAndFlush(httpContent)
@@ -340,7 +341,8 @@ class HttpProxyServerHandler(
         return interceptPipeline
     }
 
-    // fix issue #186: 不拦截https报文时，暴露一个扩展点用于代理设置，并且保持一致的编程接口
+    // fix issue #186: Quando não estiver interceptando mensagens https, exponha um ponto de extensão para configurações
+    // de proxy e mantenha uma interface de programação consistente
     private fun buildOnlyConnectPipeline(): HttpProxyInterceptPipeline {
         val interceptPipeline = HttpProxyInterceptPipeline(HttpProxyIntercept())
         interceptInitializer.init(interceptPipeline)

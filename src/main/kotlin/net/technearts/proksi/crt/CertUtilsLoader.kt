@@ -12,11 +12,10 @@ import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 
 /**
- * CertUtil 的内部类.
+ * Classe interna de CertUtil.
  *
- * 通过 [CertGenerator] 让 Proxyee 不再固定依赖 BC 加密套件, 可根据需要自行指定套件的相关操作提供给 Proxyee.
+ * Por meio do [CertGenerator], o Proxyee não depende mais do pacote de criptografia BC e pode fornecer as operações relevantes do pacote ao Proxyee de acordo com as necessidades.
  *
- * @author LamGC
  */
 object CertUtilsLoader {
     private val log = InternalLoggerFactory.getInstance(CertUtilsLoader::class.java)
@@ -28,15 +27,15 @@ object CertUtilsLoader {
         try {
             loadGenerator()
         } catch (e: Exception) {
-            // 拦截未考虑的异常以防导致类加载失败, 然后程序 Boom!
-            // 为保证即使加载失败也能正常运行, 在此例外加载 BC 默认加密实现(保持鲁棒性)
+            // Intercepte exceções não consideradas para evitar falhas de carregamento de classes e, em seguida, programe o Boom!
+            // Para garantir a operação normal mesmo se o carregamento falhar, carregue a implementação de criptografia padrão BC nesta exceção (manter a robustez)
             log.error("An uncaught exception was thrown while loading the certificate generator", e)
             generatorMap[DEFAULT_GENERATOR_NAME] = BouncyCastleCertGenerator()
         }
     }
 
     /**
-     * 通过 SPI 机制加载并验证证书生成器实现.
+     * Carregue e verifique a implementação do gerador de certificados por meio do mecanismo SPI.
      */
     private fun loadGenerator() {
         val serviceLoader = ServiceLoader.load(
@@ -79,9 +78,9 @@ object CertUtilsLoader {
     }
 
     /**
-     * 设置所使用的生成器名称.
-     * @param generatorName 欲使用的生成器所属名称.
-     * @throws NoSuchElementException 如果指定名称不存在所属生成器则抛出该异常.
+     * Defina o nome do gerador a ser usado.
+     * @param generatorName O nome do gerador a ser usado.
+     * @throws NoSuchElementException Lançado se o gerador com o nome especificado não existir.
      */
     @JvmStatic
     @Throws(NoSuchElementException::class)
@@ -93,15 +92,15 @@ object CertUtilsLoader {
     }
 
     /**
-     * 检查生成器是否存在并获取.
-     * @param name 生成器名称.
-     * @return 如果存在, 返回指定名称的生成器.
-     * @throws NullPointerException 如果 name 为 null, 则抛出 NPE.
-     * @throws NoSuchElementException 如果 name 指定的生成器不存在, 则抛出该异常.
+     * Verifique se o gerador existe e pegue-o.
+     * @param name do gerador de nomes.
+     * @return Se presente, retorna o gerador com o nome especificado.
+     * @throws NullPointerException Se o nome for nulo, lança NPE.
+     * @throws NoSuchElementException Lançada se o gerador especificado por name não existir.
      */
     private fun checkGenerateExistAndGet(name: String): CertGenerator {
         if (!generatorMap.containsKey(name)) {
-            // u1s1, Unchecked Exception 确实是个好东西.
+            // u1s1, Unchecked Exception é realmente uma coisa boa.
             throw NoSuchElementException(
                 "The certificate generator with the specified name was not found: $name"
             )
@@ -112,20 +111,20 @@ object CertUtilsLoader {
     @JvmStatic
     val currentSelectionGenerator: String
         /**
-         * 获取当前所选择的生成器名称.
-         * @return 返回指定要使用的生成器名称.
+         * Obtenha o nome do gerador atualmente selecionado.
+         * @return Retorna o nome do gerador especificado a ser usado.
          */
         get() = selectionGenerator.get()
 
     /**
-     * 生成服务端自签名证书.
-     * @param issuer 元数据(X509 Names)
-     * @param caPriKey 用于进行签名的 CA 私钥.
-     * @param caNotBefore 证书生效时间, 在这个时间之前证书也是失效的.
-     * @param caNotAfter 证书失效时间, 过了这个时间后证书即失效.
-     * @param serverPubKey 服务端证书公钥.
-     * @param hosts 证书所属域名.
-     * @return 返回指定域名所属的服务端 X509 证书.
+     * Gerar certificado autoassinado do servidor.
+     * @param issuer do emissor (Nomes X509)
+     * @param caPriKey Chave privada CA usada para assinatura.
+     * @param caNotBefore A hora efetiva do certificado, o certificado também é inválido antes dessa hora.
+     * @param caNotAfter o tempo de expiração do certificado, o certificado será inválido após esse tempo.
+     * @param serverPubKey chave pública do certificado do servidor.
+     * @param hosts O nome de domínio do certificado.
+     * @return Retorna o certificado X509 do servidor ao qual pertence o nome de domínio especificado.
      */
     @JvmStatic
     @Throws(Exception::class)
@@ -141,12 +140,12 @@ object CertUtilsLoader {
     }
 
     /**
-     * 生成 CA 证书(自签名).
-     * @param subject 元数据(X509 Names)
-     * @param caNotBefore 证书生效时间, 在这个时间之前证书也是失效的.
-     * @param caNotAfter 证书失效时间, 过了这个时间后证书即失效.
-     * @param keyPair RSA 密钥对.
-     * @return 返回自签名 CA 证书.
+     * Gerar certificado CA (auto-assinado).
+     * @param subject do assunto (Nomes X509)
+     * @param caNotBefore A hora efetiva do certificado, o certificado também é inválido antes dessa hora.
+     * @param caNotAfter o tempo de expiração do certificado, o certificado será inválido após esse tempo.
+     * @param keyPair Par de chaves RSA.
+     * @return Retorna o certificado CA autoassinado.
      */
     @JvmStatic
     @Throws(Exception::class)

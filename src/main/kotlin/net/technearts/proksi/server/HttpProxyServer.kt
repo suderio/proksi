@@ -44,7 +44,7 @@ class HttpProxyServer {
         }
         serverConfig!!.proxyLoopGroup = NioEventLoopGroup(serverConfig!!.proxyGroupThreads)
         val contextBuilder = SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE)
-        // 设置ciphers用于改变 client hello 握手协议指纹
+        // Set ciphers to change client hello handshake protocol fingerprint
         if (serverConfig!!.ciphers != null) {
             contextBuilder.ciphers(serverConfig!!.ciphers)
         }
@@ -61,14 +61,15 @@ class HttpProxyServer {
                     caCert = caCertFactory!!.cACert
                     caPriKey = caCertFactory!!.cAPriKey
                 }
-                //读取CA证书使用者信息
+                //Read CA certificate user information
                 serverConfig!!.issuer = getSubject(caCert!!)
-                //读取CA证书有效时段(server证书有效期超出CA证书的，在手机上会提示证书不安全)
+                //Read the validity period of the CA certificate (if the validity period of the server certificate
+                // exceeds the CA certificate, the mobile phone will prompt that the certificate is not safe)
                 serverConfig!!.caNotBefore = caCert.notBefore
                 serverConfig!!.caNotAfter = caCert.notAfter
-                //CA私钥用于给动态生成的网站SSL证书签证
+                //The CA private key is used to sign the dynamically generated website SSL certificate
                 serverConfig!!.caPriKey = caPriKey
-                //生产一对随机公私钥用于网站SSL证书动态创建
+                //Generate a pair of random public and private keys for dynamic creation of website SSL certificates
                 val keyPair = genKeyPair()
                 serverConfig!!.serverPriKey = keyPair.private
                 serverConfig!!.serverPubKey = keyPair.public
@@ -162,7 +163,7 @@ class HttpProxyServer {
         workerGroup = NioEventLoopGroup(serverConfig!!.workerGroupThreads)
         val bootstrap = ServerBootstrap()
         bootstrap.group(bossGroup, workerGroup)
-            .channel(NioServerSocketChannel::class.java) //                .option(ChannelOption.SO_BACKLOG, 100)
+            .channel(NioServerSocketChannel::class.java) //.option(ChannelOption.SO_BACKLOG, 100)
             .handler(LoggingHandler(LogLevel.DEBUG))
             .childHandler(object : ChannelInitializer<Channel>() {
                 @Throws(Exception::class)
@@ -187,7 +188,7 @@ class HttpProxyServer {
     }
 
     /**
-     * 释放资源
+     * release resources
      */
     fun close() {
         val eventLoopGroup = serverConfig!!.proxyLoopGroup
@@ -204,7 +205,7 @@ class HttpProxyServer {
     }
 
     /**
-     * 注册JVM关闭的钩子以释放资源
+     * Registers a hook for JVM shutdown to release resources
      */
     fun shutdownHook() {
         Runtime.getRuntime().addShutdownHook(Thread({ close() }, "Server Shutdown Thread"))
@@ -213,7 +214,7 @@ class HttpProxyServer {
     companion object {
         private val log = InternalLoggerFactory.getInstance(HttpProxyServer::class.java)
 
-        //http代理隧道握手成功
+        //http proxy tunnel handshake successful
         @JvmField
         val SUCCESS = HttpResponseStatus(
             200,

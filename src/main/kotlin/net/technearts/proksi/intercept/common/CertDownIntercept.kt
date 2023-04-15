@@ -9,7 +9,7 @@ import net.technearts.proksi.server.HttpProxyCACertFactory
 import java.security.cert.X509Certificate
 
 /**
- * 处理证书下载页面 http://proxyServerIp:proxyServerPort
+ * Lidar com a página de download do certificado http://proxyServerIp:proxyServerPort
  */
 class CertDownIntercept : HttpProxyIntercept {
     private var isDirect = false

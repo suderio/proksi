@@ -7,7 +7,7 @@ import io.netty.handler.proxy.ProxyHandler
 import net.technearts.proksi.util.ProtoUtil
 
 /**
- * HTTP代理，转发解码后的HTTP报文
+ * Proxy HTTP, encaminhando mensagens HTTP decodificadas
  */
 class HttpProxyInitializer(
     private val clientChannel: Channel, private val requestProto: ProtoUtil.RequestProto,

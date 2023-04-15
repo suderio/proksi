@@ -7,7 +7,7 @@ import io.netty.channel.ChannelInitializer
 import io.netty.handler.proxy.ProxyHandler
 
 /**
- * http代理隧道，转发原始报文
+ * Túnel de proxy HTTP, encaminhando pacotes originais
  */
 class TunnelProxyInitializer(
     private val clientChannel: Channel,

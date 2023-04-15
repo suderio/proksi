@@ -10,7 +10,7 @@ import io.netty.util.ReferenceCountUtil
 class HttpProxyClientHandler(private val clientChannel: Channel) : ChannelInboundHandlerAdapter() {
     @Throws(Exception::class)
     override fun channelRead(ctx: ChannelHandlerContext, msg: Any) {
-        //客户端channel已关闭则不转发了
+        // Se o canal do cliente estiver fechado, não será encaminhado
         if (!clientChannel.isOpen) {
             ReferenceCountUtil.release(msg)
             return

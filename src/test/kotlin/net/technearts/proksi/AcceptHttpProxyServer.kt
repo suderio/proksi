@@ -21,7 +21,7 @@ object AcceptHttpProxyServer {
                 if (count > 5) {
                     val fullHttpResponse: FullHttpResponse =
                         DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.FORBIDDEN)
-                    fullHttpResponse.content().writeBytes("<html><div>访问过于频繁！</div></html>".toByteArray())
+                    fullHttpResponse.content().writeBytes("<html><div>Visit too often!</div></html>".toByteArray())
                     clientChannel!!.writeAndFlush(fullHttpResponse)
                     return false
                 }
@@ -30,7 +30,7 @@ object AcceptHttpProxyServer {
             }
 
             override fun onClose(clientChannel: Channel?) {
-                CLIENT_LIMIT_MAP.computeIfPresent(getClientIp(clientChannel)) { s: String?, count: Int ->
+                CLIENT_LIMIT_MAP.computeIfPresent(getClientIp(clientChannel)) { _: String?, count: Int ->
                     if (count > 0) {
                         return@computeIfPresent count - 1
                     }

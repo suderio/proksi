@@ -3,11 +3,6 @@ package net.technearts.proksi.server.auth
 import net.technearts.proksi.server.auth.model.BasicHttpToken
 import java.util.*
 
-/**
- * @Author LiWei
- * @Description
- * @Date 2021/1/15 14:12
- */
 abstract class BasicHttpProxyAuthenticationProvider : HttpProxyAuthenticationProvider<BasicHttpToken?> {
     override fun authType(): String? {
         return AUTH_TYPE_BASIC

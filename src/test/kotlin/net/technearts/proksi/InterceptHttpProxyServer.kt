@@ -27,7 +27,7 @@ object InterceptHttpProxyServer {
                             clientChannel: Channel, httpRequest: HttpRequest,
                             pipeline: HttpProxyInterceptPipeline
                         ) {
-                            //替换UA，伪装成手机浏览器
+                            //Replace UA and pretend to be a mobile browser
                             /*httpRequest.headers().set(HttpHeaderNames.USER_AGENT,
                     "Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1");*/
                             //转到下一个拦截器处理
@@ -40,9 +40,9 @@ object InterceptHttpProxyServer {
                             httpResponse: HttpResponse?, pipeline: HttpProxyInterceptPipeline
                         ) {
 
-                            //拦截响应，添加一个响应头
+                            //Intercept the response, add a response header
                             httpResponse!!.headers().add("intercept", "test")
-                            //转到下一个拦截器处理
+                            //Go to next interceptor processing
                             pipeline.afterResponse(clientChannel, proxyChannel, httpResponse)
                         }
                     })

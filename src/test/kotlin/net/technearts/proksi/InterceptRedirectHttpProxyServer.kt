@@ -12,7 +12,7 @@ import net.technearts.proksi.util.HttpUtil.checkUrl
 
 /**
  * @Author: LiWei
- * @Description 匹配到百度首页时重定向到指定url
+ * @Description Redirect to the specified url when it matches the Baidu homepage
  * @Date: 2019/3/4 16:23
  */
 object InterceptRedirectHttpProxyServer {
@@ -31,7 +31,7 @@ object InterceptRedirectHttpProxyServer {
                             clientChannel: Channel, httpRequest: HttpRequest,
                             pipeline: HttpProxyInterceptPipeline
                         ) {
-                            //匹配到百度首页跳转到淘宝
+                            //Match to Baidu homepage and jump to Taobao
                             if (checkUrl(pipeline.httpRequest!!, "^www.baidu.com$")) {
                                 val hookResponse: HttpResponse =
                                     DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK)

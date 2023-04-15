@@ -3,23 +3,18 @@ package net.technearts.proksi.server.accept
 import io.netty.channel.Channel
 import io.netty.handler.codec.http.HttpRequest
 
-/**
- * @Author LiWei
- * @Description
- * @Date 2021/2/20 10:22
- */
 interface HttpProxyAcceptHandler {
     /**
-     * 客户端有新的连接建立时触发
+     * Triggered when a new connection is established by the client
      *
      * @param request
      * @param clientChannel
-     * @return 返回true表示放行，返回false则断开连接
+     * @return Returning true means release, returning false means disconnecting
      */
     fun onAccept(request: HttpRequest?, clientChannel: Channel?): Boolean
 
     /**
-     * 客户端连接关闭时触发
+     * Fired when the client connection is closed
      *
      * @param clientChannel
      */

@@ -27,9 +27,7 @@ object AuthHttpProxyServer {
             }
 
             override fun matches(request: HttpRequest?): Boolean {
-                return if (request!!.uri().matches("^/status/health$".toRegex())) {
-                    false
-                } else true
+                return !request!!.uri().matches("^/status/health$".toRegex())
             }
         }
         HttpProxyServer()
@@ -45,7 +43,7 @@ object AuthHttpProxyServer {
                             pipeline: HttpProxyInterceptPipeline
                         ) {
                             val requestProto = pipeline.requestProto
-                            if (!requestProto!!.proxy && httpRequest!!.uri().matches("^/status/health$".toRegex())) {
+                            if (!requestProto!!.proxy && httpRequest.uri().matches("^/status/health$".toRegex())) {
                                 isDirect = true
                                 val httpResponse: HttpResponse = DefaultHttpResponse(
                                     HttpVersion.HTTP_1_1,
@@ -58,7 +56,7 @@ object AuthHttpProxyServer {
                                 httpResponse.headers()[HttpHeaderNames.CONNECTION] = HttpHeaderValues.CLOSE
                                 val httpContent: HttpContent = DefaultLastHttpContent()
                                 httpContent.content().writeBytes(bts)
-                                clientChannel!!.writeAndFlush(httpResponse)
+                                clientChannel.writeAndFlush(httpResponse)
                                 clientChannel.writeAndFlush(httpContent)
                                 clientChannel.close()
                             }

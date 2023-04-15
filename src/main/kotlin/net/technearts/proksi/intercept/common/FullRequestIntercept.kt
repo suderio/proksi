@@ -56,12 +56,12 @@ abstract class FullRequestIntercept @JvmOverloads constructor(private val maxCon
     }
 
     /**
-     * 匹配到的请求会解码成FullRequest
+     * As solicitações correspondentes serão decodificadas em FullRequest
      */
     abstract fun match(httpRequest: HttpRequest?, pipeline: HttpProxyInterceptPipeline?): Boolean
 
     /**
-     * 拦截并处理响应
+     * Interceptar e processar a resposta
      */
     open fun handleRequest(httpRequest: FullHttpRequest?, pipeline: HttpProxyInterceptPipeline?) {}
 
